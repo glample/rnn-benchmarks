@@ -4,6 +4,7 @@ require('nn')
 require('cunn')
 require('recurrent')
 
+
 -- cutorch.setDevice(2)
 
 cmd = torch.CmdLine()
@@ -25,9 +26,10 @@ if cpu ~= true then
    xValues = xValues:cuda()
    yValues = yValues:cuda()
 end
-local xBatches = xValues:view(-1, batchSize, seqLength, inputSize)
-local yBatches = yValues:view(-1, batchSize, hiddenSize)
+local xBatches = xValues:split(batchSize, 1)
+local yBatches = yValues:split(batchSize, 1)
 
+local a = torch.Timer()
 local rnn
 if networkType == 'rnn' then
    rnn = nn.RNN(inputSize, hiddenSize)
@@ -36,40 +38,46 @@ elseif networkType == 'lstm' then
 else
    error('Unkown network type!')
 end
-
-rnn:sequence()
-rnn:setIterations(seqLength)
-
-local rnn = nn.Sequential():add(rnn):add(nn.Select(2, seqLength))
+local rnn = nn.Sequential():add(rnn):add(nn.SelectTable(-1))
 local criterion = nn.MSECriterion()
 if cpu ~= true then
    rnn:cuda()
    criterion:cuda()
 end
 
-local start = os.clock()
-for i = 1, xBatches:size(1) do
-   if (i % 100 == 0) then
-      print(i)
-   end
-   rnn:forward(xBatches[i])
-end
-print("Forward:")
-print("--- " .. nSamples .. " samples in " .. (os.clock() - start) .. " seconds (" .. nSamples / (os.clock() - start) .. " samples/s) ---")
-
 rnn:sequence()
 rnn:training()
+local input = xBatches[1]:split(inputSize, 2)
+criterion:forward(rnn:forward(input), yBatches[1])
+rnn:backward(input, criterion:backward(rnn.output, yBatches[1]))
+if cpu ~= true then cutorch.synchronize() end
+print("Setup : compile + forward/backward x 1")
+print("--- " .. a:time().real .. " seconds ---")
+rnn:evaluate()
 
-start = os.clock()
-for i = 1, xBatches:size(1) do
-   if (i % 100 == 0) then
+a:reset()
+for i = 1, #xBatches do
+   if (i % 1000 == 0) then
       print(i)
    end
-   local input = xBatches[i]
+   rnn:forward(xBatches[i]:split(inputSize, 2))
+end
+if cpu ~= true then cutorch.synchronize() end
+print("Forward:")
+print("--- " .. nSamples .. " samples in " .. a:time().real .. " seconds (" .. nSamples / a:time().real .. " samples/s) ---")
+
+rnn:training()
+a:reset()
+for i = 1, #xBatches do
+   if (i % 1000 == 0) then
+      print(i)
+   end
+   local input = xBatches[i]:split(inputSize, 2)
    criterion:forward(rnn:forward(input), yBatches[i])
    rnn:zeroGradParameters()
    rnn:backward(input, criterion:backward(rnn.output, yBatches[i]))
    rnn:updateParameters(0.01)
 end
+if cpu ~= true then cutorch.synchronize() end
 print("Forward + Backward:")
-print("--- " .. nSamples .. " samples in " .. (os.clock() - start) .. " seconds (" .. nSamples / (os.clock() - start) .. " samples/s) ---")
+print("--- " .. nSamples .. " samples in " .. a:time().real .. " seconds (" .. nSamples / a:time().real .. " samples/s) ---")
