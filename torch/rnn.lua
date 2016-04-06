@@ -32,13 +32,12 @@ end
 local xBatches = xValues:split(batchSize, 1)
 local yBatches = yValues:split(batchSize, 1)
 
+local a = torch.Timer()
 local rnn
 if networkType == 'rnn' then
    rnn = nn.Sequential()
-      :add(nn.ParallelTable()
-      :add(nn.Linear(inputSize, hiddenSize))
-      :add(nn.Linear(hiddenSize, hiddenSize)))
-      :add(nn.CAddTable())
+      :add(nn.JoinTable(1,1))
+      :add(nn.Linear(inputSize+hiddenSize, hiddenSize))
       :add(nn.Sigmoid())
    rnn = nn.Recurrence(rnn, hiddenSize, 1)
 elseif networkType == 'lstm' then
@@ -53,19 +52,27 @@ if cpu ~= true then
    criterion:cuda()
 end
 
-local start = os.clock()
+local input = xBatches[1]:split(inputSize, 2)
+criterion:forward(rnn:forward(input), yBatches[1])
+rnn:backward(input, criterion:backward(rnn.output, yBatches[1]))
+if cpu ~= true then cutorch.synchronize() end
+print("Setup : compile + forward/backward x 1")
+print("--- " .. a:time().real .. " seconds ---")
+
+a:reset()
 for i = 1, #xBatches do
-   if (i % 100 == 0) then
+   if (i % 1000 == 0) then
       print(i)
    end
    rnn:forward(xBatches[i]:split(inputSize, 2))
 end
+if cpu ~= true then cutorch.synchronize() end
 print("Forward:")
-print("--- " .. nSamples .. " samples in " .. (os.clock() - start) .. " seconds (" .. nSamples / (os.clock() - start) .. " samples/s) ---")
+print("--- " .. nSamples .. " samples in " .. a:time().real .. " seconds (" .. nSamples / a:time().real .. " samples/s) ---")
 
-start = os.clock()
+a:reset()
 for i = 1, #xBatches do
-   if (i % 100 == 0) then
+   if (i % 1000 == 0) then
       print(i)
    end
    local input = xBatches[i]:split(inputSize, 2)
@@ -74,5 +81,6 @@ for i = 1, #xBatches do
    rnn:backward(input, criterion:backward(rnn.output, yBatches[i]))
    rnn:updateParameters(0.01)
 end
+if cpu ~= true then cutorch.synchronize() end
 print("Forward + Backward:")
-print("--- " .. nSamples .. " samples in " .. (os.clock() - start) .. " seconds (" .. nSamples / (os.clock() - start) .. " samples/s) ---")
+print("--- " .. nSamples .. " samples in " .. a:time().real .. " seconds (" .. nSamples / a:time().real .. " samples/s) ---")

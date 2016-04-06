@@ -16,15 +16,23 @@ The reported time is the average time needed to run a training example (and not 
 | Library | Time (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- |
 | Theano  | 253.9 | 87.82 |
-| Torch | 403.3 | 154.4 |
+| Torch | 315.4 | 121.8 |
 
 
 #### Hidden layer size 500 - Batch size 20
 
 | Library | Time (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- |
+| Torch | 376.0 | 143.1 |
 | Theano | 498.4 | 182.9 |
-| Torch | 543.2 | 195.8 |
+
+
+#### Hidden layer size 1000 - Batch size 20
+
+| Library | Time (µs) | Forward only (µs) |
+| ------------- | ------------- | ------------- |
+| Torch | 637.4 | 230.2 |
+| Theano | 758.8 | 326.3 |
 
 
 
