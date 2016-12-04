@@ -31,8 +31,8 @@ This LSTM implementation used for these benchmarks does not use peephole connect
 
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
-| Theano | 7.46 | 289.6 | 99.1 |
-| Torch  | 0.03 | 434.4 | 99.9 |
+| Theano | 7.46 | __289.6__ | __99.1__ |
+| Torch  | __0.03__ | 434.4 | 99.9 |
 | TensorFlow | 3.91 | 820.0 | 266.7 |
 
 
@@ -40,8 +40,8 @@ This LSTM implementation used for these benchmarks does not use peephole connect
 
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
-| Theano | 7.59 | 619.4 | 200.9 |
-| Torch  | 0.19 | 610.7 | 201.7 |
+| Theano | 7.59 | 619.4 | __200.9__ |
+| Torch  | __0.19__ | __610.7__ | 201.7 |
 | TensorFlow | 3.97 | 886.9 | 324.9 |
 
 
@@ -49,8 +49,8 @@ This LSTM implementation used for these benchmarks does not use peephole connect
 
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
-| Theano | 9.62 | 1013.5 | 324.1 |
-| Torch  | 0.69 | 1139.8 | 346.3 |
+| Theano | 9.62 | __1013.5__ | __324.1__ |
+| Torch  | __0.69__ | 1139.8 | 346.3 |
 | TensorFlow | 3.81 | 1329.2 | 562.7 |
 
 
@@ -60,8 +60,8 @@ This LSTM implementation used for these benchmarks does not use peephole connect
 
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
-| Theano | 7.38 | 102.9 | 25.6 |
-| Torch  | 0.03 | 109.8 | 25.2 |
+| Theano | 7.38 | __102.9__ | 25.6 |
+| Torch  | __0.03__ | 109.8 | __25.2__ |
 | TensorFlow | 3.68 | 188.6 | 65.0 |
 
 
@@ -70,7 +70,7 @@ This LSTM implementation used for these benchmarks does not use peephole connect
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
 | Theano | 7.50 | 256.0 | 62.8 |
-| Torch  | 0.20 | 214.3 | 51.4 |
+| Torch  | __0.20__ | __214.3__ | __51.4__ |
 | TensorFlow | 3.73 | 255.2 | 114.2 |
 
 #### Hidden Size 1024
@@ -78,7 +78,7 @@ This LSTM implementation used for these benchmarks does not use peephole connect
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
 | Theano | 7.45 | 583.4 | 160.2 |
-| Torch  | 0.75 | 558.1 | 112.4 |
+| Torch  | __0.75__ | __558.1__ | __112.4__ |
 | TensorFlow | 3.84 | 592.2 | 238.1 |
 
 
@@ -92,16 +92,16 @@ This section benchmarks a simple RNN implementation.
 
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
-| Theano | 4.31 | 104.6 | 30.9 |
-| Torch  | 0.05 | 259.53 | 103.06 |
+| Theano | 4.31 | __104.6__ | __30.9__ |
+| Torch  | __0.05__ | 259.53 | 103.06 |
 | TensorFlow | 1.64 | 278.4 | 111.5 |
 
 #### Hidden Size 512
 
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
-| Theano | 4.36 | 275.2 | 102.2 |
-| Torch  | 0.05 | 288.2 | 114.6 |
+| Theano | 4.36 | __275.2__ | __102.2__ |
+| Torch  | __0.05__ | 288.2 | 114.6 |
 | TensorFlow | 1.62 | 349.7 | 218.4 |
 
 #### Hidden Size 1024
@@ -109,7 +109,7 @@ This section benchmarks a simple RNN implementation.
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
 | Theano | 4.44 | 443.8 | 179.5 |
-| Torch  | 0.09 | 381.4 | 118.8 |
+| Torch  | __0.09__ | __381.4__ | __118.8__ |
 | TensorFlow | 1.72 | 530.0 | 241.7 |
 
 ### Batch Size 128
@@ -118,22 +118,22 @@ This section benchmarks a simple RNN implementation.
 
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
-| Theano | 4.48 | 45.4 | 13.7 |
-| Torch  | 0.08 | 67.7 | 32.7 |
+| Theano | 4.48 | __45.4__ | __13.7__ |
+| Torch  | __0.08__ | 67.7 | 32.7 |
 | TensorFlow | 1.70 | 75.5 | 33.6 |
 
 #### Hidden Size 512
 
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
-| Theano | 4.40 | 79.0 | 23.8 |
-| Torch  | 0.09 | 73.5 | 34.2 |
+| Theano | 4.40 | 79.0 | __23.8__ |
+| Torch  | __0.09__ | __73.5__ | 34.2 |
 | TensorFlow | 1.63 | 125.6 | 86.8 |
 
 #### Hidden Size 1024
 
 | Library | Compile (s) | Train (µs) | Forward only (µs) |
 | ------------- | ------------- | ------------- | ------------- |
-| Theano | 4.38 | 147.8 | 50.3 |
-| Torch  | 0.13 | 150.2 | 64.7 |
+| Theano | 4.38 | __147.8__ | __50.3__ |
+| Torch  | __0.13__ | 150.2 | 64.7 |
 | TensorFlow | 1.70 | 222.5 | 137.8 |
