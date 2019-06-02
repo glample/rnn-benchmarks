@@ -3,8 +3,9 @@ import time
 import optparse
 import numpy as np
 import tensorflow as tf
-from tensorflow.python.ops import rnn
-
+# from tensorflow.python.ops import rnn
+from tensorflow.contrib import rnn
+from six.moves import xrange
 
 def get_feed_dict(x_data, y_data=None):
     feed_dict = {}
@@ -40,7 +41,7 @@ n_samples = batch_size * n_batch
 xinput = np.random.rand(seq_length, batch_size, hidden_size).astype(np.float32)
 ytarget = np.random.rand(batch_size, hidden_size).astype(np.float32)
 
-with tf.device('/gpu:0'):
+with tf.device('/cpu:0'):
 
    x = [tf.placeholder(tf.float32, [batch_size, hidden_size], name="x") for i in range(seq_length)]
    y = tf.placeholder(tf.float32, [batch_size, hidden_size], name="y")
@@ -54,30 +55,32 @@ with tf.device('/gpu:0'):
    else:
        raise Exception('Unknown network! '+network_type)
 
-   print "Compiling..."
+   print("Compiling...")
    start = time.time()
-   output, _cell_state = rnn.rnn(cell, x, dtype=tf.float32)
+   # output, _cell_state = rnn.rnn(cell, x, dtype=tf.float32)
+   output, _cell_state = rnn.static_rnn(cell, x, dtype=tf.float32)
    cost = tf.reduce_sum((output[-1] - y) ** 2)
 
    optim = tf.train.GradientDescentOptimizer(0.01)
    train_op = optim.minimize(cost)
 
    session = tf.Session()
-   session.run(tf.initialize_all_variables())
+   # session.run(tf.initialize_all_variables())
+   session.run(tf.global_variables_initializer())
    session.run(train_op, feed_dict=get_feed_dict(xinput, ytarget))
-   print "Setup : compile + forward/backward x 1"
-   print "--- %s seconds" % (time.time() - start)
+   print("Setup : compile + forward/backward x 1")
+   print("--- %s seconds" % (time.time() - start))
 
    start = time.time()
    for i in xrange(0, n_batch):
        session.run(output[-1], feed_dict=get_feed_dict(xinput))
    end = time.time()
-   print "Forward:"
-   print "--- %i samples in %s seconds (%f samples/s, %.7f s/sample) ---" % (n_samples, end - start, n_samples / (end - start), (end - start) / n_samples)
+   print("Forward:")
+   print("--- %i samples in %s seconds (%f samples/s, %.7f s/sample) ---" % (n_samples, end - start, n_samples / (end - start), (end - start) / n_samples))
 
    start = time.time()
    for i in xrange(0, n_batch):
        session.run(train_op, feed_dict=get_feed_dict(xinput, ytarget))
    end = time.time()
-   print "Forward + Backward:"
-   print "--- %i samples in %s seconds (%f samples/s, %.7f s/sample) ---" % (n_samples, end - start, n_samples / (end - start), (end - start) / n_samples)
+   print("Forward + Backward:")
+   print("--- %i samples in %s seconds (%f samples/s, %.7f s/sample) ---" % (n_samples, end - start, n_samples / (end - start), (end - start) / n_samples))
